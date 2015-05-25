@@ -71,11 +71,11 @@ local layouts =
 -- }}}
 
 -- {{{ Wallpaper
-if beautiful.wallpaper then
-    for s = 1, screen.count() do
-        gears.wallpaper.maximized(beautiful.wallpaper, s, true)
-    end
-end
+--if beautiful.wallpaper then
+--    for s = 1, screen.count() do
+--        gears.wallpaper.maximized(beautiful.wallpaper, s, true)
+--    end
+--end
 -- }}}
 
 -- {{{ Tags
@@ -445,3 +445,6 @@ end)
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
+
+require("wp_slideshow")
+wp_slideshow(gears.wallpaper.maximized,screen,"~/Dropbox/wallpaper/",timer({timeout=30}),naughty)
