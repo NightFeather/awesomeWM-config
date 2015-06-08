@@ -30,6 +30,8 @@ function wp_slideshow(handle, target, path, ticker, n)
     end
 
     wp_notifier.notify({text = wp_list[wp_index]})
+    os.execute("gsettings set org.cinnamon.desktop.background picture-uri 'file://" .. wp_list[wp_index] .. "'")
+
  
     -- stop the timer (we don't need multiple instances running at the same time)
 --    ticker:stop()

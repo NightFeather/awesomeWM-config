@@ -3,6 +3,7 @@ local gears = require("gears")
 local awful = require("awful")
 awful.rules = require("awful.rules")
 require("awful.autofocus")
+require("awful.remote")
 -- Widget and layout library
 local wibox = require("wibox")
 -- Theme handling library
@@ -447,4 +448,4 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- }}}
 
 require("wp_slideshow")
-wp_slideshow(gears.wallpaper.maximized,screen,"~/Dropbox/wallpaper/",timer({timeout=30}),naughty)
+wp_slideshow(gears.wallpaper.fit,screen,"~/Dropbox/wallpaper/",timer({timeout=60}),naughty)
