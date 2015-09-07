@@ -98,6 +98,8 @@ myawesomemenu = {
 }
 
 mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
+                                    { "file manager", "nemo --no-desktop" },
+                                    { "volume controll", "pavucontroll"},
                                     { "lock desktop", "cinnamon-screensaver-command -l"},
                                     { "open terminal", terminal },
                                     { "logout", "cinnamon-session-quit"}
