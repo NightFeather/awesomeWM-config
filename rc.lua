@@ -97,12 +97,18 @@ myawesomemenu = {
    { "quit", awesome.quit }
 }
 
-mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
+cinnamonmenu = {
                                     { "file manager", "nemo --no-desktop" },
                                     { "volume controll", "pavucontroll"},
-                                    { "lock desktop", "cinnamon-screensaver-command -l"},
+                                    { "lock desktop", "cinnamon-screensaver-command -l"}
+}
+
+mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
+                                    { "cinnamon", cinnamonmenu, beautiful.awesome_icon },
                                     { "open terminal", terminal },
-                                    { "logout", "cinnamon-session-quit"}
+                                    { "logout", "cinnamon-session-quit"},
+                                    { "reboot", "cinnamon-session-quit --reboot" },
+                                    { "poweroff", "cinnamon-session-quit --power-off" }
                                   }
                         })
 
@@ -276,7 +282,8 @@ globalkeys = awful.util.table.join(
                   awful.util.getdir("cache") .. "/history_eval")
               end),
     -- Menubar
-    awful.key({ modkey }, "p", function() menubar.show() end)
+    awful.key({ modkey }, "p", function() menubar.show() end),
+    awful.key({ "Control" , "Mod1" }, "l", function () awful.util.spawn("cinnamon-screensaver-command -l") end )
 )
 
 clientkeys = awful.util.table.join(
