@@ -283,7 +283,15 @@ globalkeys = awful.util.table.join(
               end),
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end),
+
+    -- ScreenLock
     awful.key({ "Control" , "Mod1" }, "l", function () awful.util.spawn("cinnamon-screensaver-command -l") end )
+    
+    -- Fn keys
+    awful.key({ }, "XF86MonBrightnessUp",   function() awful.util.spawn("xbacklight + 5") end),
+    awful.key({ }, "XF86MonBrightnessDown", function() awful.util.spawn("xbacklight - 5") end),
+    awful.key({ }, "XF86AudioRaiseVolume",  function() awful.util.spawn("amixer -D pulse sset Master 3%+") end),
+    awful.key({ }, "XF86AudioLowerVolume",  function() awful.util.spawn("amixer -D pulse sset Master 3%-") end)
 )
 
 clientkeys = awful.util.table.join(
