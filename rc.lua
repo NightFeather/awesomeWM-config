@@ -285,7 +285,7 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey }, "p", function() menubar.show() end),
 
     -- ScreenLock
-    awful.key({ "Control" , "Mod1" }, "l", function () awful.util.spawn("cinnamon-screensaver-command -l") end )
+    awful.key({ "Control" , "Mod1" }, "l", function () awful.util.spawn("cinnamon-screensaver-command -l") end),
     
     -- Fn keys
     awful.key({ }, "XF86MonBrightnessUp",   function() awful.util.spawn("xbacklight + 2") end),
