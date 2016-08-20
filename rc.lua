@@ -99,7 +99,7 @@ myawesomemenu = {
 
 cinnamonmenu = {
                                     { "file manager", "nemo --no-desktop" },
-                                    { "volume controll", "pavucontroll"},
+                                    { "volume controll", "pavucontrol"},
                                     { "lock desktop", "cinnamon-screensaver-command -l"}
 }
 
@@ -121,7 +121,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 -- {{{ Wibox
 -- Create a textclock widget
-mytextclock = awful.widget.textclock()
+mytextclock = awful.widget.textclock(" %a %b %d, %H:%M ", 10)
 
 -- Create a wibox for each screen and add it
 mywibox = {}
