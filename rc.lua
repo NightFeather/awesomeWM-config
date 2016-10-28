@@ -1,6 +1,6 @@
 -- Standard awesome library
 local gears = require("gears")
-local awful = require("awful")
+awful = require("awful")
 awful.rules = require("awful.rules")
 require("awful.autofocus")
 require("awful.remote")
@@ -9,8 +9,8 @@ local wibox = require("wibox")
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
-local naughty = require("naughty")
-local menubar = require("menubar")
+naughty = require("naughty")
+menubar = require("menubar")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -217,9 +217,9 @@ end
 
 -- {{{ Mouse bindings
 root.buttons(awful.util.table.join(
-    awful.button({ }, 3, function () mymainmenu:toggle() end),
-    awful.button({ }, 4, awful.tag.viewnext),
-    awful.button({ }, 5, awful.tag.viewprev)
+    awful.button({ }, 3, function () mymainmenu:toggle() end)--,
+--    awful.button({ }, 4, awful.tag.viewnext),
+--    awful.button({ }, 5, awful.tag.viewprev)
 ))
 -- }}}
 
@@ -372,11 +372,30 @@ awful.rules.rules = {
                      keys = clientkeys,
                      buttons = clientbuttons } },
     { rule = { class = "MPlayer" },
-      properties = { floating = true } },
+      properties = {
+        floating = true
+      }
+    },
+
     { rule = { class = "pinentry" },
-      properties = { floating = true } },
+      properties = {
+        floating = true
+      }
+    },
+
     { rule = { class = "gimp" },
-      properties = { floating = true } },
+      properties = {
+        floating = true
+      }
+    },
+
+    { rule = { class = "Conky" },
+      properties = {
+        floating = true,
+        focusable = false
+      }
+    }
+
     -- Set Firefox to always map on tags number 2 of screen 1.
     -- { rule = { class = "Firefox" },
     --   properties = { tag = tags[1][2] } },
