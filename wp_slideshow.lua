@@ -1,49 +1,57 @@
--- Origin Version Here: https://gist.github.com/anonymous/9072154f03247ab6e28c
+WallpaperSlide = {}
+WallpaperSlide.__index = WallpaperSlide
 
--- scan directory and filter files if filter provided
-
-function scandir(directory)
-    local i, t, popen = 0, {}, io.popen
-    for filename in popen("find " .. directory .. " -name \"*.jpg\" -or -name \"*.png\""):lines() do
-      i = i + 1
-      t[i] = filename
-    end
-    return t
+function WallpaperSlide:new( basedir, align ,interval )
+  local obj = {}
+  setmetatable(obj, WallpaperSlide)
+  obj.basedir = basedir                    -- Set wallpaper scanning basedir
+  obj.align = align                        -- Send to gears.wallpaper
+  obj.timer = timer({timeout=interval})    -- Set timer
+  obj.handle = require('gears').wallpaper  -- Wallpaper handle
+  obj.target = screen                      -- 
+  obj.notifier = require('naughty').notify -- notify handle
+  obj:scandir()
+  return obj
 end
 
-function wp_slideshow(handle, target, path, ticker, n)
-  local wp_index = 1
-  local wp_list = scandir(path)
-  local wp_handle = handle
-  local wp_target = target
-  local wp_notifier = n
-  wp_ticker = ticker
+function WallpaperSlide:scandir()
+  local i, t, popen = 0, {}, io.popen
+  for filename in popen("find " .. self.basedir .. " -name \"*.jpg\" -or -name \"*.png\""):lines() do
+    i = i + 1
+    t[i] = filename
+  end
+  self.wp_list = t
+end
 
-  wp_notifier.notify({text = "Wallpaper Slide Started"})
-  wp_notifier.notify({text = "Current Timeout is " .. wp_ticker.timeout .. " seconds."})
-  wp_notifier.notify({text = #wp_list .. "wallpapers in queue."})
+function WallpaperSlide:nextWallpaper()
 
-  wp_ticker:connect_signal("timeout", function()
+    -- get random index
+    self.wp_index = math.random( 1, #self.wp_list)
 
-    for s = 1, wp_target.count() do
-      wp_handle(wp_list[wp_index], s)
+    for s = 1, screen.count() do
+      self.handle[self.align](self.wp_list[self.wp_index], s)
     end
 
-    wp_notifier.notify({text = wp_list[wp_index]})
-    os.execute("gsettings set org.cinnamon.desktop.background picture-uri 'file://" .. wp_list[wp_index] .. "'")
+    self.notifier({text = self.wp_list[self.wp_index]})
+    os.execute(table.concat{
+      "gsettings",
+      "set",
+      "org.cinnamon.desktop.background",
+      "picture-uri",
+      "'file://",
+      self.wp_list[self.wp_index],
+      "'"}, " ")
 
+end
 
-    -- stop the timer (we don't need multiple instances running at the same time)
-    -- ticker:stop()
+function WallpaperSlide:run()
+  self.notifier({text = "Wallpaper Slide Started"})
+  self.notifier({text = "Current Timeout is " .. self.timer.timeout .. " seconds."})
+  self.notifier({text = #self.wp_list .. " wallpapers in queue."})
 
-    -- get next random index
-    wp_index = math.random( 1, #wp_list)
-
-    --restart the timer
---    ticker.timeout = wp_timeout
---    ticker:start()
+  self.timer:connect_signal("timeout", function()
+    self:nextWallpaper()
   end)
 
-  wp_ticker:start()
-
+  self.timer:start()
 end

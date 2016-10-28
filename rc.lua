@@ -476,4 +476,5 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- }}}
 
 require("wp_slideshow")
-wp_slideshow(gears.wallpaper.fit,screen,"~/Dropbox/wallpaper/",timer({timeout=60}),naughty)
+wp_handle = WallpaperSlide:new("~/Dropbox/wallpaper/", "fit", 60)
+wp_handle:run()
