@@ -392,7 +392,7 @@ awful.rules.rules = {
     { rule = { class = "Conky" },
       properties = {
         floating = true,
-        focusable = false
+        focus = false
       }
     }
 
