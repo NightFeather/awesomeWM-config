@@ -123,6 +123,14 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- Create a textclock widget
 mytextclock = awful.widget.textclock(" %a %b %d, %H:%M ", 10)
 
+-- Create a textbattery widget
+mybattery = (function(widget)
+  batt = timer({timeout = 1})
+  batt:connect_signal("timeout", function() widget:set_text(" [ " .. io.popen("acpi|grep -Eo '[0-9]{2,3}%'"):read() .. " ] ") end )
+  batt:start()
+  return widget
+end)(wibox.widget.textbox())
+
 -- Create a wibox for each screen and add it
 mywibox = {}
 mypromptbox = {}
@@ -202,6 +210,7 @@ awful.screen.connect_for_each_screen(function(s)
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
+    right_layout:add(mybattery)
     right_layout:add(mytextclock)
     right_layout:add(mylayoutbox[s])
 
@@ -291,7 +300,7 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "XF86MonBrightnessUp",   function() awful.util.spawn("xbacklight + 2") end),
     awful.key({ }, "XF86MonBrightnessDown", function() awful.util.spawn("xbacklight - 2") end),
     awful.key({ }, "XF86AudioRaiseVolume",  function() awful.util.spawn("amixer -D pulse sset Master 3%+") end),
-    awful.key({ }, "XF86AudioLowerVolume",  function() awful.util.spawn("amixer -D pulse sset Master 3%-") end),
+    awful.key({ }, "XF86AudioLowerVolume",  function() awful.util.spawn("amixer -D pulse sset Master 3%-") end)
 )
 
 clientkeys = awful.util.table.join(
