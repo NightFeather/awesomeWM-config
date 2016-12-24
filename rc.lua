@@ -129,7 +129,7 @@ mybattery = (function(widget)
     a = {}
     table.insert(a," [ ")
     table.insert(a, io.popen("acpi|grep -Eo '[0-9]{2,3}%'"):read())
-    table.insert(a, ( (os.execute("acpi|grep -q Charging")) and "+" or "-" ))
+    table.insert(a, ( (os.execute("acpi|grep -q Discharging")) and "-" or "+" ))
     table.insert(a, " ] ")
     return table.concat(a)
   end
