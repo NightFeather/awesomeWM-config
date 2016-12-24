@@ -25,6 +25,10 @@ end
 
 function WallpaperSlide:nextWallpaper()
 
+    if #self.wp_list <= 0 then
+      return 0
+    end
+
     -- get random index
     self.wp_index = math.random( 1, #self.wp_list)
 

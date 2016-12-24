@@ -125,8 +125,17 @@ mytextclock = awful.widget.textclock(" %a %b %d, %H:%M ", 10)
 
 -- Create a textbattery widget
 mybattery = (function(widget)
+  function maketext()
+    a = {}
+    table.insert(a," [ ")
+    table.insert(a, io.popen("acpi|grep -Eo '[0-9]{2,3}%'"):read())
+    table.insert(a, ( (os.execute("acpi|grep -q Charging")) and "+" or "-" ))
+    table.insert(a, " ] ")
+    return table.concat(a)
+  end
+  widget:set_text(maketext())
   batt = timer({timeout = 1})
-  batt:connect_signal("timeout", function() widget:set_text(" [ " .. io.popen("acpi|grep -Eo '[0-9]{2,3}%'"):read() .. " ] ") end )
+  batt:connect_signal("timeout", function() widget:set_text(maketext()) end )
   batt:start()
   return widget
 end)(wibox.widget.textbox())
