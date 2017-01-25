@@ -90,10 +90,9 @@ local layouts =
 
 -- {{{ Tags
 -- Define a tag table which hold all screen tags.
-tags = {}
 awful.screen.connect_for_each_screen(function(s)
     -- Each screen has its own tag table.
-    tags[s] = awful.tag({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, s, layouts[1])
+    s.tags = awful.tag({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, s, layouts[1])
 end)
 -- }}}
 
@@ -132,21 +131,24 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock(" %a %b %d, %H:%M ", 10)
 
--- Create a wibox for each screen and add it
-mywibox = {}
-mypromptbox = {}
-mylayoutbox = {}
-mytaglist = {}
-mytaglist.buttons = awful.util.table.join(
+-- create key-bindings for later setup in each screen
+local taglist_buttons = awful.util.table.join(
                     awful.button({ }, 1, awful.tag.viewonly),
-                    awful.button({ modkey }, 1, awful.client.movetotag),
+                    awful.button({ modkey }, 1, function(t)
+                      if client.focus then
+                        client.focus:move_to_tag(t)
+                      end
+                    end),
                     awful.button({ }, 3, awful.tag.viewtoggle),
-                    awful.button({ modkey }, 3, awful.client.toggletag),
-                    awful.button({ }, 4, function(t) awful.tag.viewnext(awful.tag.getscreen(t)) end),
-                    awful.button({ }, 5, function(t) awful.tag.viewprev(awful.tag.getscreen(t)) end)
+                    awful.button({ modkey }, 3, function(t)
+                      if client.focus then
+                        client.focus:toggle_tag(t)
+                      end
+                    end),
+                    awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
+                    awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
                     )
-mytasklist = {}
-mytasklist.buttons = awful.util.table.join(
+local tasklist_buttons = awful.util.table.join(
                      awful.button({ }, 1, function (c)
                                               if c == client.focus then
                                                   c.minimized = true
@@ -184,43 +186,43 @@ mytasklist.buttons = awful.util.table.join(
 
 awful.screen.connect_for_each_screen(function(s)
     -- Create a promptbox for each screen
-    mypromptbox[s] = awful.widget.prompt()
+    s.mypromptbox = awful.widget.prompt()
     -- Create an imagebox widget which will contains an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
-    mylayoutbox[s] = awful.widget.layoutbox(s)
-    mylayoutbox[s]:buttons(awful.util.table.join(
+    s.mylayoutbox = awful.widget.layoutbox(s)
+    s.mylayoutbox:buttons(awful.util.table.join(
                            awful.button({ }, 1, function () awful.layout.inc(layouts, 1) end),
                            awful.button({ }, 3, function () awful.layout.inc(layouts, -1) end),
                            awful.button({ }, 4, function () awful.layout.inc(layouts, 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(layouts, -1) end)))
     -- Create a taglist widget
-    mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
+    s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
 
     -- Create a tasklist widget
-    mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
+    s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
 
     -- Create the wibox
-    mywibox[s] = awful.wibox({ position = "top", screen = s })
+    s.mywibox = awful.wibox({ position = "top", screen = s })
 
     -- Widgets that are aligned to the left
     local left_layout = wibox.layout.fixed.horizontal()
     left_layout:add(mylauncher)
-    left_layout:add(mytaglist[s])
-    left_layout:add(mypromptbox[s])
+    left_layout:add(s.mytaglist)
+    left_layout:add(s.mypromptbox)
 
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
     if s.index == 1 then right_layout:add(wibox.widget.systray()) end
     right_layout:add(mytextclock)
-    right_layout:add(mylayoutbox[s])
+    right_layout:add(s.mylayoutbox)
 
     -- Now bring it all together (with the tasklist in the middle)
     local layout = wibox.layout.align.horizontal()
     layout:set_left(left_layout)
-    layout:set_middle(mytasklist[s])
+    layout:set_middle(s.mytasklist)
     layout:set_right(right_layout)
 
-    mywibox[s]:set_widget(layout)
+    s.mywibox:set_widget(layout)
 end)
 -- }}}
 
@@ -281,30 +283,22 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, "Control" }, "n", awful.client.restore),
 
     -- Prompt
-    awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end),
+    awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end),
 
     awful.key({ modkey }, "x",
               function ()
-                  awful.prompt.run({ prompt = "Run Lua code: " },
-                  mypromptbox[mouse.screen].widget,
-                  awful.util.eval, nil,
-                  awful.util.getdir("cache") .. "/history_eval")
+                  awful.prompt.run {
+                    prompt = "Run Lua code: ",
+                    textbox = awful.screen.focused().mypromptbox.widget,
+                    exec_callback = awful.util.eval,
+                    history_path = awful.util.get_cache_dir() .. "/history_eval"
+                  }
               end),
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end),
-<<<<<<< HEAD
-    awful.key({ "Control" , "Mod1" }, "l", function () awful.util.spawn("cinnamon-screensaver-command -l") end )
-=======
 
     -- ScreenLock
-    awful.key({ "Control" , "Mod1" }, "l", function () awful.spawn("cinnamon-screensaver-command -l") end),
-    
-    -- Fn keys
-    awful.key({ }, "XF86MonBrightnessUp",   function() awful.spawn("xbacklight + 2") end),
-    awful.key({ }, "XF86MonBrightnessDown", function() awful.spawn("xbacklight - 2") end),
-    awful.key({ }, "XF86AudioRaiseVolume",  function() awful.spawn("amixer -D pulse sset Master 3%+") end),
-    awful.key({ }, "XF86AudioLowerVolume",  function() awful.spawn("amixer -D pulse sset Master 3%-") end)
->>>>>>> 8d6811d... Migrate to 4.0
+    awful.key({ "Control" , "Mod1" }, "l", function () awful.spawn("cinnamon-screensaver-command -l") end)
 )
 
 clientkeys = awful.util.table.join(
@@ -312,7 +306,7 @@ clientkeys = awful.util.table.join(
     awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ),
     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end),
-    awful.key({ modkey,           }, "o",      awful.client.movetoscreen                        ),
+    awful.key({ modkey,           }, "o",      function (c) c:move_to_screen()               end),
     awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end),
     awful.key({ modkey,           }, "n",
         function (c)
@@ -501,6 +495,5 @@ client.connect_signal("focus", function(c) c.border_color = beautiful.border_foc
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 
-require("wp_slideshow")
-wp_handle = WallpaperSlide:new("~/Dropbox/wallpaper/", "fit", 60)
-wp_handle:run()
+-- wp_handle = require("wp_slideshow"):new("~/Dropbox/wallpaper/", "fit", 60)
+-- wp_handle:run()
