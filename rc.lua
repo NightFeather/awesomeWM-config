@@ -72,11 +72,20 @@ local layouts =
 -- }}}
 
 -- {{{ Wallpaper
---if beautiful.wallpaper then
---    for s = 1, screen.count() do
---        gears.wallpaper.maximized(beautiful.wallpaper, s, true)
---    end
+--local function set_wallpaper(s)
+-- Wallpaper
+--  if beautiful.wallpaper then
+--      local wallpaper = beautiful.wallpaper
+--      -- If wallpaper is a function, call it with the screen
+--      if type(wallpaper) == "function" then
+--          wallpaper = wallpaper(s)
+--      end
+--      gears.wallpaper.maximized(wallpaper, s, true)
+--  end
 --end
+
+-- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
+-- screen.connect_signal("property::geometry", set_wallpaper)
 -- }}}
 
 -- {{{ Tags
@@ -121,7 +130,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 -- {{{ Wibox
 -- Create a textclock widget
-mytextclock = awful.widget.textclock(" %a %b %d, %H:%M ", 10)
+mytextclock = wibox.widget.textclock(" %a %b %d, %H:%M ", 10)
 
 -- Create a textbattery widget
 mybattery = (function(widget)
@@ -218,7 +227,7 @@ awful.screen.connect_for_each_screen(function(s)
 
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
-    if s == 1 then right_layout:add(wibox.widget.systray()) end
+    if s.index == 1 then right_layout:add(wibox.widget.systray()) end
     right_layout:add(mybattery)
     right_layout:add(mytextclock)
     right_layout:add(mylayoutbox[s])
@@ -274,7 +283,7 @@ globalkeys = awful.util.table.join(
         end),
 
     -- Standard program
-    awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end),
+    awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end),
     awful.key({ modkey, "Control" }, "r", awesome.restart),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit),
 
@@ -303,13 +312,13 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey }, "p", function() menubar.show() end),
 
     -- ScreenLock
-    awful.key({ "Control" , "Mod1" }, "l", function () awful.util.spawn("cinnamon-screensaver-command -l") end),
+    awful.key({ "Control" , "Mod1" }, "l", function () awful.spawn("cinnamon-screensaver-command -l") end),
     
     -- Fn keys
-    awful.key({ }, "XF86MonBrightnessUp",   function() awful.util.spawn("xbacklight + 2") end),
-    awful.key({ }, "XF86MonBrightnessDown", function() awful.util.spawn("xbacklight - 2") end),
-    awful.key({ }, "XF86AudioRaiseVolume",  function() awful.util.spawn("amixer -D pulse sset Master 3%+") end),
-    awful.key({ }, "XF86AudioLowerVolume",  function() awful.util.spawn("amixer -D pulse sset Master 3%-") end)
+    awful.key({ }, "XF86MonBrightnessUp",   function() awful.spawn("xbacklight + 2") end),
+    awful.key({ }, "XF86MonBrightnessDown", function() awful.spawn("xbacklight - 2") end),
+    awful.key({ }, "XF86AudioRaiseVolume",  function() awful.spawn("amixer -D pulse sset Master 3%+") end),
+    awful.key({ }, "XF86AudioLowerVolume",  function() awful.spawn("amixer -D pulse sset Master 3%-") end)
 )
 
 clientkeys = awful.util.table.join(
@@ -396,7 +405,12 @@ awful.rules.rules = {
                      focus = awful.client.focus.filter,
                      raise = true,
                      keys = clientkeys,
-                     buttons = clientbuttons } },
+                     buttons = clientbuttons,
+                     screen = awful.screen.preferred,
+                     placement = awful.placement.no_overlap+awful.placement.no_offscreen
+
+      }
+    },
     { rule = { class = "MPlayer" },
       properties = {
         floating = true
