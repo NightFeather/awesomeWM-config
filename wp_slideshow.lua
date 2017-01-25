@@ -1,4 +1,4 @@
-WallpaperSlide = {}
+local WallpaperSlide = {}
 WallpaperSlide.__index = WallpaperSlide
 
 function WallpaperSlide:new( basedir, align ,interval )
@@ -15,8 +15,13 @@ function WallpaperSlide:new( basedir, align ,interval )
 end
 
 function WallpaperSlide:scandir()
-  local i, t, popen = 0, {}, io.popen
-  for filename in popen("find " .. self.basedir .. " -name \"*.jpg\" -or -name \"*.png\""):lines() do
+  local i, t = 0, {}
+
+  handle = io.popen("find " .. self.basedir .. " -name \"*.jpg\" -or -name \"*.png\"")
+  result = handle:lines()
+  handle:close()
+
+  for filename in result do
     i = i + 1
     t[i] = filename
   end
@@ -55,3 +60,5 @@ function WallpaperSlide:run()
 
   self.timer:start()
 end
+
+return WallpaperSlide
