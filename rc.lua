@@ -133,7 +133,7 @@ mytextclock = wibox.widget.textclock(" %a %b %d, %H:%M ", 10)
 
 -- create key-bindings for later setup in each screen
 local taglist_buttons = awful.util.table.join(
-                    awful.button({ }, 1, awful.tag.viewonly),
+                    awful.button({ }, 1, function (t) t:view_only() end ),
                     awful.button({ modkey }, 1, function(t)
                       if client.focus then
                         client.focus:move_to_tag(t)
@@ -156,8 +156,8 @@ local tasklist_buttons = awful.util.table.join(
                                                   -- Without this, the following
                                                   -- :isvisible() makes no sense
                                                   c.minimized = false
-                                                  if not c:isvisible() then
-                                                      awful.tag.viewonly(c:tags()[1])
+                                                  if not c:isvisible() and c.first_tag then
+                                                    c.first_tag.view_only()
                                                   end
                                                   -- This will also un-minimize
                                                   -- the client, if needed
@@ -202,7 +202,7 @@ awful.screen.connect_for_each_screen(function(s)
     s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
 
     -- Create the wibox
-    s.mywibox = awful.wibox({ position = "top", screen = s })
+    s.mywibox = awful.wibar({ position = "top", screen = s })
 
     -- Widgets that are aligned to the left
     local left_layout = wibox.layout.fixed.horizontal()
@@ -329,28 +329,28 @@ for i = 1, 9 do
         -- View tag only.
         awful.key({ modkey }, "#" .. i + 9,
                   function ()
-                        local screen = mouse.screen
-                        local tag = awful.tag.gettags(screen)[i]
+                        local screen = awful.screen.focused()
+                        local tag = screen.tags[i]
                         if tag then
-                           awful.tag.viewonly(tag)
+                          tag:view_only()
                         end
                   end),
         -- Toggle tag.
         awful.key({ modkey, "Control" }, "#" .. i + 9,
                   function ()
-                      local screen = mouse.screen
-                      local tag = awful.tag.gettags(screen)[i]
+                      local screen = awful.screen.focused()
+                      local tag = screen.tags[i]
                       if tag then
-                         awful.tag.viewtoggle(tag)
+                         tag:view_only()
                       end
                   end),
         -- Move client to tag.
         awful.key({ modkey, "Shift" }, "#" .. i + 9,
                   function ()
                       if client.focus then
-                          local tag = awful.tag.gettags(client.focus.screen)[i]
+                          local tag = client.focus.screen.tags[i]
                           if tag then
-                              awful.client.movetotag(tag)
+                              client.focus:move_to_tag(tag)
                           end
                      end
                   end),
@@ -358,9 +358,9 @@ for i = 1, 9 do
         awful.key({ modkey, "Control", "Shift" }, "#" .. i + 9,
                   function ()
                       if client.focus then
-                          local tag = awful.tag.gettags(client.focus.screen)[i]
+                          local tag = client.focus.screen.tags[i]
                           if tag then
-                              awful.client.toggletag(tag)
+                              client.focus:taggle_tag(tag)
                           end
                       end
                   end))
