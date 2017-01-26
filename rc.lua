@@ -135,12 +135,22 @@ mytextclock = wibox.widget.textclock(" %a %b %d, %H:%M ", 10)
 mybattery = (function(widget)
   function maketext()
     a = {}
-    handle = io.popen("acpi|grep -Eo '[0-9]{2,3}%'")
+
+    handle = io.popen("acpi")
     result = handle:read()
     handle:close()
+
+    if result:find("Full") then
+      mark = "*"
+    elseif result:find("Discharging") then
+      mark = "-"
+    else
+      mark = "+"
+    end
+
     table.insert(a," [ ")
-    table.insert(a, result)
-    table.insert(a, ((os.execute("acpi|grep -q Discharging")) and "-" or "+" ))
+    table.insert(a, result:match("%d?%d%d%%"))
+    table.insert(a, mark)
     table.insert(a, " ] ")
     return table.concat(a)
   end
