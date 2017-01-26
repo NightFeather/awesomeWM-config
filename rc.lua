@@ -140,7 +140,7 @@ mybattery = (function(widget)
     handle:close()
     table.insert(a," [ ")
     table.insert(a, result)
-    table.insert(a, ( (os.execute("acpi|grep -q Discharging &")) and "-" or "+" ))
+    table.insert(a, ((os.execute("acpi|grep -q Discharging")) and "-" or "+" ))
     table.insert(a, " ] ")
     return table.concat(a)
   end
