@@ -155,9 +155,12 @@ mybattery = (function(widget)
     return table.concat(a)
   end
   widget:set_text(maketext())
-  batt = timer({timeout = 1})
-  batt:connect_signal("timeout", function() widget:set_text(maketext()) end )
-  batt:start()
+
+  batt = gears.timer({ timeout = 1,
+                       autostart = true,
+                       callback = function() widget:set_text(maketext()) end
+         })
+
   return widget
 end)(wibox.widget.textbox())
 
