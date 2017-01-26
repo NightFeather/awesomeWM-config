@@ -3,6 +3,7 @@ WallpaperSlide.__index = WallpaperSlide
 
 function WallpaperSlide:new( basedir, align ,interval )
   local obj = {}
+  local timer = require('gears').timer
   setmetatable(obj, WallpaperSlide)
   obj.basedir = basedir                    -- Set wallpaper scanning basedir
   obj.align = align                        -- Send to gears.wallpaper
