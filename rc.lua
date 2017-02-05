@@ -136,30 +136,36 @@ mybattery = (function(widget)
   function maketext()
     a = {}
 
-    handle = io.popen("acpi")
-    result = handle:read()
+    handle = io.open("/sys/class/power_supply/BAT1/capacity")
+    bat_cap = handle:read()
     handle:close()
 
-    if result:find("Full") then
+    handle = io.open("/sys/class/power_supply/BAT1/status")
+    bat_stat = handle:read()
+    handle:close()
+
+    if bat_stat:find("Full") then
       mark = "*"
-    elseif result:find("Discharging") then
+    elseif bat_stat:find("Discharging") then
       mark = "-"
     else
       mark = "+"
     end
 
     table.insert(a," [ ")
-    table.insert(a, result:match("%d?%d%d%%"))
+    table.insert(a, string.format("%3d%%", bat_cap))
     table.insert(a, mark)
     table.insert(a, " ] ")
     return table.concat(a)
   end
   widget:set_text(maketext())
 
-  batt = gears.timer({ timeout = 1,
-                       autostart = true,
-                       callback = function() widget:set_text(maketext()) end
-         })
+  batt = gears.timer.start_new(1,
+            function()
+                widget:set_text(maketext())
+                return true
+            end
+         )
 
   return widget
 end)(wibox.widget.textbox())
