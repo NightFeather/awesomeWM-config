@@ -132,43 +132,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 mytextclock = wibox.widget.textclock(" %a %b %d, %H:%M ", 10)
 
 -- Create a textbattery widget
-mybattery = (function(widget)
-  function maketext()
-    a = {}
-
-    handle = io.open("/sys/class/power_supply/BAT1/capacity")
-    bat_cap = handle:read()
-    handle:close()
-
-    handle = io.open("/sys/class/power_supply/BAT1/status")
-    bat_stat = handle:read()
-    handle:close()
-
-    if bat_stat:find("Full") then
-      mark = "*"
-    elseif bat_stat:find("Discharging") then
-      mark = "-"
-    else
-      mark = "+"
-    end
-
-    table.insert(a," [ ")
-    table.insert(a, string.format("%3d%%", bat_cap))
-    table.insert(a, mark)
-    table.insert(a, " ] ")
-    return table.concat(a)
-  end
-  widget:set_text(maketext())
-
-  batt = gears.timer.start_new(1,
-            function()
-                widget:set_text(maketext())
-                return true
-            end
-         )
-
-  return widget
-end)(wibox.widget.textbox())
+mybattery = require("battery_widget"):new("BAT1")
 
 -- create key-bindings for later setup in each screen
 local taglist_buttons = awful.util.table.join(
@@ -252,7 +216,7 @@ awful.screen.connect_for_each_screen(function(s)
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
     if s.index == 1 then right_layout:add(wibox.widget.systray()) end
-    right_layout:add(mybattery)
+    right_layout:add(mybattery.widget)
     right_layout:add(mytextclock)
     right_layout:add(s.mylayoutbox)
 
