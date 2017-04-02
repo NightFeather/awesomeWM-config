@@ -298,7 +298,20 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey }, "p", function() menubar.show() end),
 
     -- ScreenLock
-    awful.key({ "Control" , "Mod1" }, "l", function () awful.spawn("cinnamon-screensaver-command -l") end)
+    awful.key({ "Control" , "Mod1" }, "l", function () awful.spawn("cinnamon-screensaver-command -l") end),
+
+    -- PrintScreen
+    awful.key({           }, "Print", function ()
+      awful.spawn("maim ".. os.getenv("HOME") .. '/Pictures/screenshot-' .. tostring(os.time()) .. '.png')
+    end),
+
+    awful.key({ "Control" }, "Print", function ()
+      awful.spawn("maim " .. "-s " .. os.getenv("HOME") .. '/Pictures/screenshot-' .. tostring(os.time()) .. '.png')
+    end),
+
+    awful.key({ "Shift"   }, "Print", function ()
+      awful.spawn("maim " .. "-i" .. tostring(client.focus.window) .. " " .. os.getenv("HOME") .. '/Pictures/screenshot-' .. tostring(os.time()) .. '.png')
+    end)
 )
 
 clientkeys = awful.util.table.join(
