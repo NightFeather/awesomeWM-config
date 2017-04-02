@@ -20,13 +20,14 @@ function WallpaperSlide:scandir()
 
   handle = io.popen("find " .. self.basedir .. " -name \"*.jpg\" -or -name \"*.png\"")
   result = handle:lines()
-  handle:close()
 
   for filename in result do
     i = i + 1
     t[i] = filename
   end
   self.wp_list = t
+
+  handle:close()
 end
 
 function WallpaperSlide:nextWallpaper()

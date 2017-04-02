@@ -309,6 +309,19 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "XF86MonBrightnessDown", function() awful.spawn("xbacklight - 2") end),
     awful.key({ }, "XF86AudioRaiseVolume",  function() awful.spawn("amixer -D pulse sset Master 3%+") end),
     awful.key({ }, "XF86AudioLowerVolume",  function() awful.spawn("amixer -D pulse sset Master 3%-") end)
+
+    -- PrintScreen
+    awful.key({           }, "Print", function ()
+      awful.spawn("maim ".. os.getenv("HOME") .. '/Pictures/screenshot-' .. tostring(os.time()) .. '.png')
+    end),
+
+    awful.key({ "Control" }, "Print", function ()
+      awful.spawn("maim " .. "-s " .. os.getenv("HOME") .. '/Pictures/screenshot-' .. tostring(os.time()) .. '.png')
+    end),
+
+    awful.key({ "Shift"   }, "Print", function ()
+      awful.spawn("maim " .. "-i" .. tostring(client.focus.window) .. " " .. os.getenv("HOME") .. '/Pictures/screenshot-' .. tostring(os.time()) .. '.png')
+    end)
 )
 
 clientkeys = awful.util.table.join(
@@ -505,5 +518,5 @@ client.connect_signal("focus", function(c) c.border_color = beautiful.border_foc
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 
--- wp_handle = require("wp_slideshow"):new("~/Dropbox/wallpaper/", "fit", 60)
--- wp_handle:run()
+wp_handle = require("wp_slideshow"):new("~/Dropbox/wallpaper/", "fit", 60)
+wp_handle:run()
