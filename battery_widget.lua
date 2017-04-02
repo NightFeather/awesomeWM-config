@@ -55,6 +55,8 @@ function BatteryWidget:update_tooltip()
 
   bat_current = tonumber(self:read_info("current_now")) / 1000
   bat_voltage = tonumber(self:read_info("voltage_now")) / 1000000
+  bat_design_full = tonumber(self:read_info("charge_full_design"))
+  bat_full = tonumber(self:read_info("charge_full"))
 
   table.insert(a, string.format("Name:    %6s", self.battery_name))
   table.insert(a, string.format("Voltage: %2.2fV", bat_voltage))
@@ -64,6 +66,8 @@ function BatteryWidget:update_tooltip()
   else
     table.insert(a, string.format("Current: %4.0fmA", bat_current))
   end
+
+  table.insert(a, string.format("Health: %2.2f%%", (bat_full / bat_design_full) * 100))
 
   print({text = table.concat(a, "\n")})
   self.tooltip:set_text(table.concat(a,"\n"))
