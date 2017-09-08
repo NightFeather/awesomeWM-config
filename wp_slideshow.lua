@@ -60,6 +60,10 @@ function WallpaperSlide:run()
   self.notifier({text = "Current Timeout is " .. self.timer.timeout .. " seconds."})
   self.notifier({text = #self.wp_list .. " wallpapers in queue."})
 
+  math.randomseed(tostring(os.time()):reverse():sub(1,6))
+
+  self:nextWallpaper()
+
   self.timer:connect_signal("timeout", function()
     self:nextWallpaper()
   end)
