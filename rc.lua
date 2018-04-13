@@ -305,10 +305,11 @@ globalkeys = awful.util.table.join(
     awful.key({ "Control" , "Mod1" }, "l", function () awful.spawn("cinnamon-screensaver-command -l") end),
     
     -- Fn keys
-    awful.key({ }, "XF86MonBrightnessUp",   function() awful.spawn("xbacklight + 2") end),
-    awful.key({ }, "XF86MonBrightnessDown", function() awful.spawn("xbacklight - 2") end),
-    awful.key({ }, "XF86AudioRaiseVolume",  function() awful.spawn("amixer -D pulse sset Master 3%+") end),
-    awful.key({ }, "XF86AudioLowerVolume",  function() awful.spawn("amixer -D pulse sset Master 3%-") end),
+    awful.key({ }, "XF86MonBrightnessUp",   function() awful.spawn("xbacklight -inc 5") end),
+    awful.key({ }, "XF86MonBrightnessDown", function() awful.spawn("xbacklight -dec 5") end),
+    awful.key({ }, "XF86AudioRaiseVolume",  function() awful.spawn("amixer set Master 3%+") end),
+    awful.key({ }, "XF86AudioLowerVolume",  function() awful.spawn("amixer set Master 3%-") end),
+    awful.key({ }, "XF86AudioMute",  function() awful.spawn("amixer set Master toggle") end),
 
     -- PrintScreen
     awful.key({           }, "Print", function ()
