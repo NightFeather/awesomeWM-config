@@ -12,6 +12,11 @@ local beautiful = require("beautiful")
 naughty = require("naughty")
 menubar = require("menubar")
 
+naughty.config.defaults["margin"] = 8
+beautiful.notification_shape = function(cr,w,h)
+  gears.shape.rounded_rect(cr, w, h, 8)
+end
+
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -305,8 +310,8 @@ globalkeys = awful.util.table.join(
     awful.key({ "Control" , "Mod1" }, "l", function () awful.spawn("cinnamon-screensaver-command -l") end),
     
     -- Fn keys
-    awful.key({ }, "XF86MonBrightnessUp",   function() awful.spawn("xbacklight -inc 5") end),
-    awful.key({ }, "XF86MonBrightnessDown", function() awful.spawn("xbacklight -dec 5") end),
+    awful.key({ }, "XF86MonBrightnessUp",   function() awful.spawn("xbacklight -inc 5 -time 200") end),
+    awful.key({ }, "XF86MonBrightnessDown", function() awful.spawn("xbacklight -dec 5 -time 200") end),
     awful.key({ }, "XF86AudioRaiseVolume",  function() awful.spawn("amixer set Master 3%+") end),
     awful.key({ }, "XF86AudioLowerVolume",  function() awful.spawn("amixer set Master 3%-") end),
     awful.key({ }, "XF86AudioMute",  function() awful.spawn("amixer set Master toggle") end),
