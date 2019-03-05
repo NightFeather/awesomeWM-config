@@ -58,11 +58,24 @@ function BatteryWidget:update_widget()
     mark = "+"
   end
 
-  table.insert(a," [ ")
+  cap = tonumber(bat_cap)
+
+  table.insert(a,"[ ")
+
+  if cap > 90 then
+    table.insert(a,"<span color='#00FF00'>")
+  elseif cap > 30 then
+    table.insert(a,"<span color='#FFFFFF'>")
+  elseif cap > 10 then
+    table.insert(a,"<span color='#00FFFF'>")
+  else
+    table.insert(a,"<span color='#FF0000'>")
+  end
+
   table.insert(a, string.format("%3d%%", bat_cap))
   table.insert(a, mark)
-  table.insert(a, " ] ")
-  self.widget:set_text(table.concat(a))
+  table.insert(a, " </span> ]")
+  self.widget:set_markup(table.concat(a))
 end
 
 function BatteryWidget:update_tooltip()
