@@ -42,9 +42,9 @@ end
 beautiful.init("/usr/share/awesome/themes/blackburn/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "terminator"
+terminal = "alacritty"
 editor = os.getenv("EDITOR") or "vim"
-editor_cmd = terminal .. " -x " .. editor
+editor_cmd = terminal .. " -e " .. editor
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -508,4 +508,7 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- }}}
 
 wp_handle = require("wp_slideshow"):new("~/Dropbox/wallpaper/", "fit", 60)
-wp_handle:run()
+
+if #wp_handle.wp_list > 0 then
+  wp_handle:run()
+end
